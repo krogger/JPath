@@ -2,6 +2,8 @@ package to.us.harha.jpath.util.math;
 
 import to.us.harha.jpath.Main;
 
+import java.util.Random;
+
 public class Vec3f
 {
 
@@ -141,13 +143,13 @@ public class Vec3f
         return temp_a.sub(temp_b).normalize();
     }
 
-    public Vec3f randomHemisphere()
+    public Vec3f randomHemisphere(Random random)
     {
         Vec3f r;
         do
         {
             // TODO: Use spherical coords
-            r = new Vec3f(2.0f * Main.RNG.nextFloat() - 1.0f, 2.0f * Main.RNG.nextFloat() - 1.0f, 2.0f * Main.RNG.nextFloat() - 1.0f).normalize();
+            r = new Vec3f(2.0f * random.nextFloat() - 1.0f, 2.0f * random.nextFloat() - 1.0f, 2.0f * random.nextFloat() - 1.0f).normalize();
         } while (this.dot(r) <= 0);
         return r;
     }

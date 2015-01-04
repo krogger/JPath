@@ -10,66 +10,41 @@ import to.us.harha.jpath.util.math.Ray;
 import to.us.harha.jpath.util.math.Vec3f;
 
 import java.util.Arrays;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Tracer
 {
-
     private int m_maxrecursion;
-    private int m_cpu_cores;
+    private int m_section;
+    private int m_sections;
     private Vec3f[] m_samples;
-    private AtomicInteger m_samples_taken;
     private Scene m_scene;
     private Logger m_log;
+    private Random random;
 
-    public Tracer(Display display, int maxrecursion, int cpu_cores)
+    public Tracer(Vec3f[] samples, int maxrecursion, int section, int sections)
     {
         m_maxrecursion = maxrecursion;
-        m_cpu_cores = cpu_cores;
-        m_samples = new Vec3f[display.getWidth() * display.getHeight()];
-        m_samples_taken = new AtomicInteger();
+        m_section = section;
+        m_sections = sections;
+        m_samples = samples;
         m_scene = new Scene();
+        random = new Random();
         m_log = new Logger(this.getClass().getName());
 
-        clearSamples();
-
-        m_log.printMsg("Tracer instance has been started, using " + m_cpu_cores + " CPU Cores!");
-    }
-
-    // Single threaded rendering
-    public void render(Display display)
-    {
-        float width = display.getWidth();
-        float height = display.getHeight();
-
-        Ray ray = new Ray(new Vec3f(0.0f, 2.5f, 13.0f), new Vec3f(0.0f, 0.0f, -1.0f));
-        for (int y = 0; y < display.getHeight(); y++)
-        {
-            for (int x = 0; x < display.getWidth(); x++)
-            {
-                int index = x + y * display.getWidth();
-                //TODO: Add gitter to x and y to anti-alias
-                float x_norm = (x - width * 0.5f) / width * display.getAR();
-                float y_norm = (height * 0.5f - y) / height;
-                ray.setDir(new Vec3f(x_norm, y_norm, -1.0f).normalize());
-
-                m_samples[index] = m_samples[index].add(pathTrace(ray, 0));
-
-                display.drawPixelVec3fAveraged(index, m_samples[index], m_samples_taken.get());
-            }
-        }
+        m_log.printMsg("Tracer " + section + " of " + sections + " started");
     }
 
     // Multithreaded rendering
-    public void renderPortion(Display display, int section)
+    public void renderPortion(Display display, int sampleCount)
     {
         float width = display.getWidth();
         float height = display.getHeight();
-        int height_portion = display.getHeight() / m_cpu_cores;
 
         Ray ray = new Ray(new Vec3f(0.0f, 2.5f, 13.0f), new Vec3f(0.0f, 0.0f, -1.0f));
 
-        for (int y = section * height_portion; y < (section + 1) * height_portion - 1; y++) // subtract 1 to see lines
+        for (int y = m_section; y < height; y += m_sections)
         {
             for (int x = 0;  x < width; x++)
             {
@@ -81,7 +56,7 @@ public class Tracer
 
                 m_samples[index] = m_samples[index].add(pathTrace(ray, 0));
 
-                display.drawPixelVec3fAveraged(index, m_samples[index], m_samples_taken.get());
+                display.drawPixelVec3fAveraged(index, m_samples[index], sampleCount);
             }
         }
     }
@@ -137,7 +112,7 @@ public class Tracer
         {
             Ray newRay;
             if (m.getGlossiness() > 0.0f)
-                newRay = new Ray(iSectionFinal.getPos(), ray.getDir().reflect(iSectionFinal.getNorm()).add(iSectionFinal.getNorm().randomHemisphere().scale(m.getGlossiness())).normalize());
+                newRay = new Ray(iSectionFinal.getPos(), ray.getDir().reflect(iSectionFinal.getNorm()).add(iSectionFinal.getNorm().randomHemisphere(random).scale(m.getGlossiness())).normalize());
             else
                 newRay = new Ray(iSectionFinal.getPos(), ray.getDir().reflect(iSectionFinal.getNorm()).normalize());
             color_final = color_final.add(pathTrace(newRay, n + 1).scale(m.getReflectivity()));
@@ -148,7 +123,7 @@ public class Tracer
         {
             Ray newRay;
             if (m.getGlossiness() > 0.0f)
-                newRay = new Ray(iSectionFinal.getPos(), ray.getDir().refract(iSectionFinal.getNorm(), 1.0f, m.getRefractivityIndex()).add(iSectionFinal.getNorm().randomHemisphere().scale(m.getGlossiness())).normalize());
+                newRay = new Ray(iSectionFinal.getPos(), ray.getDir().refract(iSectionFinal.getNorm(), 1.0f, m.getRefractivityIndex()).add(iSectionFinal.getNorm().randomHemisphere(random).scale(m.getGlossiness())).normalize());
             else
                 newRay = new Ray(iSectionFinal.getPos(), ray.getDir().refract(iSectionFinal.getNorm(), 1.0f, m.getRefractivityIndex()).normalize());
             color_final = color_final.add(pathTrace(newRay, n + 1).scale(m.getRefractivity()));
@@ -158,7 +133,7 @@ public class Tracer
         // NOTE: This could be improved / changed, it isn't physically correct at all atm and it's quite simple
         if (m.getReflectance().length() > 0.0f)
         {
-            Ray newRay = new Ray(iSectionFinal.getPos(), iSectionFinal.getNorm().randomHemisphere().normalize());
+            Ray newRay = new Ray(iSectionFinal.getPos(), iSectionFinal.getNorm().randomHemisphere(random).normalize());
 
             float NdotD = Math.abs(iSectionFinal.getNorm().dot(newRay.getDir()));
             Vec3f BRDF = m.getReflectance().scale(1.0f * NdotD);
@@ -168,16 +143,6 @@ public class Tracer
         }
 
         return color_final;
-    }
-
-    public void clearSamples()
-    {
-        Arrays.fill(m_samples, new Vec3f());
-    }
-
-    public void incrementSampleCounter()
-    {
-        m_samples_taken.incrementAndGet();
     }
 
 }
