@@ -5,71 +5,71 @@ import to.us.harha.jpath.util.math.Vec3f;
 public class Material
 {
 
-    private Vec3f m_emittance;
-    private Vec3f m_reflectance;
-    private float m_reflectivity;
-    private float m_refractivity;
-    private float m_refractivityIndex;
-    private float m_glossiness;
+    private Vec3f emittance;
+    private Vec3f reflectance;
+    private float reflectivity;
+    private float refractivity;
+    private float refractivityIndex;
+    private float glossiness;
 
     public Material(Vec3f emittance, Vec3f reflectance, float reflectivity, float refractivity, float refractivityIndex, float glossiness)
     {
-        m_emittance = emittance;
-        m_reflectance = reflectance;
-        m_reflectivity = reflectivity;
-        m_refractivity = refractivity;
-        m_refractivityIndex = refractivityIndex;
-        m_glossiness = glossiness;
+        this.emittance = emittance;
+        this.reflectance = reflectance;
+        this.reflectivity = reflectivity;
+        this.refractivity = refractivity;
+        this.refractivityIndex = refractivityIndex;
+        this.glossiness = glossiness;
     }
 
     public Material(Vec3f reflectance, float reflectivity, float refractivity, float refractivityIndex, float glossiness)
     {
-        m_emittance = new Vec3f();
-        m_reflectance = reflectance;
-        m_reflectivity = reflectivity;
-        m_glossiness = glossiness;
-        m_refractivity = refractivity;
-        m_refractivityIndex = refractivityIndex;
+        emittance = new Vec3f();
+        this.reflectance = reflectance;
+        this.reflectivity = reflectivity;
+        this.glossiness = glossiness;
+        this.refractivity = refractivity;
+        this.refractivityIndex = refractivityIndex;
     }
 
     public Material(Vec3f emittance, Vec3f reflectance)
     {
-        m_emittance = emittance;
-        m_reflectance = reflectance;
-        m_reflectivity = 0.0f;
-        m_refractivity = 0.0f;
-        m_refractivityIndex = 0.0f;
-        m_glossiness = 0.0f;
+        this.emittance = emittance;
+        this.reflectance = reflectance;
+        reflectivity = 0.0f;
+        refractivity = 0.0f;
+        refractivityIndex = 0.0f;
+        glossiness = 0.0f;
     }
 
     public Vec3f getEmittance()
     {
-        return m_emittance;
+        return emittance;
     }
 
     public Vec3f getReflectance()
     {
-        return m_reflectance;
+        return reflectance;
     }
 
     public float getReflectivity()
     {
-        return m_reflectivity;
+        return reflectivity;
     }
 
     public float getRefractivity()
     {
-        return m_refractivity;
+        return refractivity;
     }
 
     public float getRefractivityIndex()
     {
-        return m_refractivityIndex;
+        return refractivityIndex;
     }
 
     public float getGlossiness()
     {
-        return m_glossiness;
+        return glossiness;
     }
 
 }

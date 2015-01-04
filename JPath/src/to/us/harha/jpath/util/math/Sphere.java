@@ -5,13 +5,13 @@ import to.us.harha.jpath.Main;
 public class Sphere implements Primitive
 {
 
-    protected Vec3f m_pos;
-    private float m_radius;
+    protected Vec3f pos;
+    private float radius;
 
     public Sphere(Vec3f pos, float radius)
     {
-        m_pos = pos;
-        m_radius = radius;
+        this.pos = pos;
+        this.radius = radius;
     }
 
     @Override
@@ -20,9 +20,9 @@ public class Sphere implements Primitive
         Vec3f S;
         float b, c, h, t;
 
-        S = r.getPos().sub(m_pos);
+        S = r.getPos().sub(pos);
         b = S.dot(r.getDir());
-        c = S.dot(S) - (m_radius * m_radius);
+        c = S.dot(S) - (radius * radius);
         h = b * b - c;
 
         if (h < 0.0f)
@@ -33,47 +33,7 @@ public class Sphere implements Primitive
         if (t < Main.EPSILON)
             return null;
 
-        Intersection x = new Intersection();
-        x.setPos(r.getPos().add(r.getDir().scale(t)));
-        x.setNorm(x.getPos().sub(m_pos).divide(m_radius));
-        x.setT(t);
-
-        return x;
+        Vec3f point = r.getPos().add(r.getDir().scale(t));
+        return new Intersection(point, point.sub(pos).divide(radius), t);
     }
-
-	/*
-	@Override
-	public Intersection intersect(Ray r)
-	{
-		Vec3f S;
-		float dist_sq, b, d, t, t1, t2;
-
-		S = Vec3f.sub(r.getPos(), m_pos);
-		dist_sq = Vec3f.dot(S, S);
-
-		if (dist_sq <= m_radius)
-			return null;
-
-		b = Vec3f.dot(Vec3f.negate(S), r.getDir());
-		d = (b * b) - dist_sq + (m_radius * m_radius);
-
-		if (d < 0.0f)
-			return null;
-
-		d = (float) Math.sqrt(d);
-		t1 = b - d;
-		t2 = b + d;
-		t = Math.min(t1,  t2);
-
-		if (t < Main.EPSILON)
-			return null;
-
-		Intersection x = new Intersection();
-		x.setPos(Vec3f.add(Vec3f.scale(r.getDir(), t), r.getPos()));
-		x.setNorm(Vec3f.divide(Vec3f.sub(x.getPos(), m_pos), m_radius));
-		x.setT(t);
-
-		return x;
-	}
-	*/
 }

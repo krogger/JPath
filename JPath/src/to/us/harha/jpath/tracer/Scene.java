@@ -11,11 +11,11 @@ import java.util.ArrayList;
 
 public class Scene
 {
-    private ArrayList<TracerObject> m_objects;
+    private ArrayList<TracerObject> objects;
 
     public Scene()
     {
-        m_objects = new ArrayList<>();
+        objects = new ArrayList<>();
 
         Material mat_white_diffuse = new Material(new Vec3f(0.0f), new Vec3f(1.0f), 0.0f, 0.0f, 0.0f, 0.0f);
         Material mat_white_diffuse_reflective = new Material(new Vec3f(0.0f), new Vec3f(1.0f), 0.1f, 0.0f, 0.0f, 0.0f);
@@ -107,28 +107,28 @@ public class Scene
         // obj_orange_light.addPrimitive(sphere_8);
         // obj_cyan_light.addPrimitive(sphere_9);
 
-        m_objects.add(obj_white_diffuse_reflective);
-        m_objects.add(obj_white_diffuse);
-        m_objects.add(obj_green_diffuse);
-        //m_objects.add(obj_blue_diffuse);
-        m_objects.add(obj_red_diffuse);
+        objects.add(obj_white_diffuse_reflective);
+        objects.add(obj_white_diffuse);
+        objects.add(obj_green_diffuse);
+        //objects.add(obj_blue_diffuse);
+        objects.add(obj_red_diffuse);
 
-        m_objects.add(obj_black_mirror);
-        m_objects.add(obj_red_mirror);
-        m_objects.add(obj_green_mirror);
-        m_objects.add(obj_blue_mirror);
+        objects.add(obj_black_mirror);
+        objects.add(obj_red_mirror);
+        objects.add(obj_green_mirror);
+        objects.add(obj_blue_mirror);
 
-        m_objects.add(obj_cyan_glass);
-        m_objects.add(obj_black_glass);
+        objects.add(obj_cyan_glass);
+        objects.add(obj_black_glass);
 
-        m_objects.add(obj_white_light);
-        m_objects.add(obj_cyan_light);
-        m_objects.add(obj_lime_light);
+        objects.add(obj_white_light);
+        objects.add(obj_cyan_light);
+        objects.add(obj_lime_light);
     }
 
     public ArrayList<TracerObject> getObjects()
     {
-        return m_objects;
+        return objects;
     }
 
 }

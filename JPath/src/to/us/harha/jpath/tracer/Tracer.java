@@ -13,25 +13,25 @@ import java.util.Random;
 
 public class Tracer
 {
-    private int m_maxrecursion;
-    private int m_section;
-    private int m_sections;
-    private Vec3f[] m_samples;
-    private Scene m_scene;
-    private Logger m_log;
+    private int maxDepth;
+    private int section;
+    private int sections;
+    private Vec3f[] samples;
+    private Scene scene;
+    private Logger log;
     private Random random;
 
-    public Tracer(Vec3f[] samples, int maxrecursion, int section, int sections)
+    public Tracer(Vec3f[] samples, int maxDepth, int section, int sections)
     {
-        m_maxrecursion = maxrecursion;
-        m_section = section;
-        m_sections = sections;
-        m_samples = samples;
-        m_scene = new Scene();
+        this.samples = samples;
+        this.maxDepth = maxDepth;
+        this.section = section;
+        this.sections = sections;
+        scene = new Scene();
         random = new Random();
-        m_log = new Logger(this.getClass().getName());
+        log = new Logger(this.getClass().getName());
 
-        m_log.printMsg("Tracer " + section + " of " + sections + " started");
+        log.printMsg("Tracer " + section + " of " + sections + " started");
     }
 
     // Multithreaded rendering
@@ -40,9 +40,9 @@ public class Tracer
         float width = display.getWidth();
         float height = display.getHeight();
 
-        Ray ray = new Ray(new Vec3f(0.0f, 2.5f, 13.0f), new Vec3f(0.0f, 0.0f, -1.0f));
+        Vec3f camera = new Vec3f(0.0f, 2.5f, 13.0f);
         float pixelSize = 1.0f / height;
-        for (int y = m_section; y < height; y += m_sections)
+        for (int y = section; y < height; y += sections)
         {
             for (int x = 0;  x < width; x++)
             {
@@ -50,11 +50,11 @@ public class Tracer
 
                 float x_norm = (x - width * 0.5f) / width * display.getAR() + random.nextFloat() * pixelSize;
                 float y_norm = (height * 0.5f - y) / height + random.nextFloat() * pixelSize;
-                ray.setDir(new Vec3f(x_norm, y_norm, -1.0f).normalize());
+                Ray ray = new Ray(camera, new Vec3f(x_norm, y_norm, -1.0f).normalize());
 
-                m_samples[index] = m_samples[index].add(pathTrace(ray, 0));
+                samples[index] = samples[index].add(pathTrace(ray, 0));
 
-                display.drawPixelVec3fAveraged(index, m_samples[index], sampleCount);
+                display.drawPixelVec3fAveraged(index, samples[index], sampleCount);
             }
         }
     }
@@ -66,7 +66,7 @@ public class Tracer
     public Vec3f pathTrace(Ray ray, int n)
     {
         // Return black if max recursion depth has been exceeded
-        if (n > m_maxrecursion)
+        if (n > maxDepth)
             return new Vec3f();
 
         // Initialize some objects and variables
@@ -77,7 +77,7 @@ public class Tracer
         float t_init = Float.MAX_VALUE;
 
         // Intersect the initial ray against all scene objects and find the closest intersection to the ray origin
-        for (TracerObject o : m_scene.getObjects())
+        for (TracerObject o : scene.getObjects())
         {
             for (Primitive p : o.getPrimitives())
             {

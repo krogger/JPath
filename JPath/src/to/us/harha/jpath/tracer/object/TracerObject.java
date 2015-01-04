@@ -7,28 +7,28 @@ import java.util.ArrayList;
 public class TracerObject
 {
 
-    private ArrayList<Primitive> m_primitives;
-    private Material m_material;
+    private ArrayList<Primitive> primitives;
+    private Material material;
 
     public TracerObject(Material material)
     {
-        m_primitives = new ArrayList<>();
-        m_material = material;
+        primitives = new ArrayList<>();
+        this.material = material;
     }
 
     public ArrayList<Primitive> getPrimitives()
     {
-        return m_primitives;
+        return primitives;
     }
 
     public Material getMaterial()
     {
-        return m_material;
+        return material;
     }
 
     public void addPrimitive(Primitive p)
     {
-        m_primitives.add(p);
+        primitives.add(p);
     }
 
 }

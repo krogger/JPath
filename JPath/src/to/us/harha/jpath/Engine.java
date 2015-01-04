@@ -13,17 +13,17 @@ import java.util.concurrent.CountDownLatch;
 public class Engine
 {
     private int sections;
-    private Display m_display;
+    private Display display;
     private Tracer[] tracers;
-    private Logger m_log;
+    private Logger log;
 
     public Engine(Display display)
     {
-        m_display = display;
+        this.display = display;
 
         sections = Runtime.getRuntime().availableProcessors();
-        m_log = new Logger(this.getClass().getName());
-        m_log.printMsg("Engine instance has been started! # of Available CPU Cores: " + sections);
+        log = new Logger(this.getClass().getName());
+        log.printMsg("Engine instance has been started! # of Available CPU Cores: " + sections);
 
         Vec3f[] samples = new Vec3f[display.getWidth() * display.getHeight()];
         Arrays.fill(samples, new Vec3f());
@@ -33,7 +33,7 @@ public class Engine
         {
             tracers[section] = new Tracer(samples, 8, section, sections);
         }
-        m_display.createBufferStrategy(2);
+        this.display.createBufferStrategy(2);
     }
 
     public void run()
@@ -44,7 +44,7 @@ public class Engine
         {
             frames++;
             render(frames);
-            m_log.printMsg("Frame: " + frames + " Elapsed Time: " + (TimeUtils.getTime() - start));
+            log.printMsg("Frame: " + frames + " Elapsed Time: " + (TimeUtils.getTime() - start));
         }
     }
 
@@ -58,7 +58,7 @@ public class Engine
                 @Override
                 public void run()
                 {
-                    tracer.renderPortion(m_display, sampleCount);
+                    tracer.renderPortion(display, sampleCount);
                     latch.countDown();
                 }
             }.start();
@@ -70,9 +70,9 @@ public class Engine
             System.exit(1);
         }
 
-        BufferStrategy bs = m_display.getBufferStrategy();
+        BufferStrategy bs = display.getBufferStrategy();
         Graphics g = bs.getDrawGraphics();
-        g.drawImage(m_display.getImage(), 0, 0, m_display.getWidth(), m_display.getHeight(), null);
+        g.drawImage(display.getImage(), 0, 0, display.getWidth(), display.getHeight(), null);
         g.dispose();
         bs.show();
     }
