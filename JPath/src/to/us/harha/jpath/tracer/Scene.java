@@ -110,14 +110,17 @@ public class Scene
         m_objects.add(obj_white_diffuse_reflective);
         m_objects.add(obj_white_diffuse);
         m_objects.add(obj_green_diffuse);
-        m_objects.add(obj_blue_diffuse);
+        //m_objects.add(obj_blue_diffuse);
         m_objects.add(obj_red_diffuse);
+
         m_objects.add(obj_black_mirror);
         m_objects.add(obj_red_mirror);
         m_objects.add(obj_green_mirror);
         m_objects.add(obj_blue_mirror);
+
         m_objects.add(obj_cyan_glass);
         m_objects.add(obj_black_glass);
+
         m_objects.add(obj_white_light);
         m_objects.add(obj_cyan_light);
         m_objects.add(obj_lime_light);

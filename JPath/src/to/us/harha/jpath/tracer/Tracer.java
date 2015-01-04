@@ -61,44 +61,27 @@ public class Tracer
     }
 
     // Multithreaded rendering
-    public void renderPortion(Display display, int t1, int t2)
+    public void renderPortion(Display display, int section)
     {
-        int t = t1 + t2 * (m_cpu_cores / 2);
-
-        if (t1 >= (m_cpu_cores / 2))
-            t1 = (m_cpu_cores / 2) - 1;
-        if (t2 >= (m_cpu_cores / 2))
-            t2 = (m_cpu_cores / 2) - 1;
-
         float width = display.getWidth();
         float height = display.getHeight();
-        int width_portion = display.getWidth() / (m_cpu_cores / 2);
-        int height_portion = display.getHeight() / (m_cpu_cores / 2);
+        int height_portion = display.getHeight() / m_cpu_cores;
 
         Ray ray = new Ray(new Vec3f(0.0f, 2.5f, 13.0f), new Vec3f(0.0f, 0.0f, -1.0f));
 
-        for (int y = height_portion * t2; y < (height_portion * t2) + height_portion; y++)
+        for (int y = section * height_portion; y < (section + 1) * height_portion - 1; y++) // subtract 1 to see lines
         {
-            for (int x = width_portion * t1; x < (width_portion * t1) + width_portion; x++)
+            for (int x = 0;  x < width; x++)
             {
-                int xx = x - width_portion * t1;
-                int yy = y - height_portion * t2;
-                int index_screen = x + y * display.getWidth();
-                int index_sample = xx + yy * width_portion;
+                int index = x + y * display.getWidth();
 
-                if (xx == 0 || xx == width_portion || yy == 0 || yy == width_portion)
-                {
-                    // For debugging purposes, leave the borders of a rendered portion unrendered
-                } else
-                {
-                    float x_norm = (x - width * 0.5f) / width * display.getAR();
-                    float y_norm = (height * 0.5f - y) / height;
-                    ray.setDir(new Vec3f(x_norm, y_norm, -1.0f).normalize());
+                float x_norm = (x - width * 0.5f) / width * display.getAR();
+                float y_norm = (height * 0.5f - y) / height;
+                ray.setDir(new Vec3f(x_norm, y_norm, -1.0f).normalize());
 
-                    m_samples[index_screen] = m_samples[index_screen].add(pathTrace(ray, 0));
+                m_samples[index] = m_samples[index].add(pathTrace(ray, 0));
 
-                    display.drawPixelVec3fAveraged(index_screen, m_samples[index_screen], m_samples_taken.get());
-                }
+                display.drawPixelVec3fAveraged(index, m_samples[index], m_samples_taken.get());
             }
         }
     }
@@ -154,7 +137,7 @@ public class Tracer
         {
             Ray newRay;
             if (m.getGlossiness() > 0.0f)
-                newRay = new Ray(iSectionFinal.getPos(), ray.getDir().add(iSectionFinal.getNorm()).reflect(iSectionFinal.getNorm().randomHemisphere().scale(m.getGlossiness())).normalize());
+                newRay = new Ray(iSectionFinal.getPos(), ray.getDir().reflect(iSectionFinal.getNorm()).add(iSectionFinal.getNorm().randomHemisphere().scale(m.getGlossiness())).normalize());
             else
                 newRay = new Ray(iSectionFinal.getPos(), ray.getDir().reflect(iSectionFinal.getNorm()).normalize());
             color_final = color_final.add(pathTrace(newRay, n + 1).scale(m.getReflectivity()));

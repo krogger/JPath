@@ -110,7 +110,7 @@ public class Vec3f
 
     public Vec3f reflect(Vec3f normal)
     {
-        return this.sub(normal.scale(2.0f * normal.dot(this)));
+        return this.sub(normal.scale(normal.dot(this)).scale(2.0f));
     }
 
     public Vec3f refract(Vec3f normal, float i1, float i2)
