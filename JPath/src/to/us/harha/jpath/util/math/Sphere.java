@@ -19,9 +19,9 @@ public class Sphere extends Primitive
         Vec3f S;
         float b, c, h, t;
 
-        S = Vec3f.sub(r.getPos(), m_pos);
-        b = Vec3f.dot(S, r.getDir());
-        c = Vec3f.dot(S, S) - (m_radius * m_radius);
+        S = r.getPos().sub(m_pos);
+        b = S.dot(r.getDir());
+        c = S.dot(S) - (m_radius * m_radius);
         h = b * b - c;
 
         if (h < 0.0f)
@@ -33,8 +33,8 @@ public class Sphere extends Primitive
             return null;
 
         Intersection x = new Intersection();
-        x.setPos(Vec3f.add(r.getPos(), Vec3f.scale(r.getDir(), t)));
-        x.setNorm(Vec3f.divide(Vec3f.sub(x.getPos(), m_pos), m_radius));
+        x.setPos(r.getPos().add(r.getDir().scale(t)));
+        x.setNorm(x.getPos().sub(m_pos).divide(m_radius));
         x.setT(t);
 
         return x;

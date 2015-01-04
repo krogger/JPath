@@ -48,12 +48,12 @@ public class Tracer
             for (int x = 0; x < display.getWidth(); x++)
             {
                 int index = x + y * display.getWidth();
-
+                //TODO: Add gitter to x and y to anti-alias
                 float x_norm = (x - width * 0.5f) / width * display.getAR();
                 float y_norm = (height * 0.5f - y) / height;
-                ray.setDir(Vec3f.normalize(new Vec3f(x_norm, y_norm, -1.0f)));
+                ray.setDir(new Vec3f(x_norm, y_norm, -1.0f).normalize());
 
-                m_samples[index] = Vec3f.add(m_samples[index], pathTrace(ray, 0));
+                m_samples[index] = m_samples[index].add(pathTrace(ray, 0));
 
                 display.drawPixelVec3fAveraged(index, m_samples[index], m_samples_taken.get());
             }
@@ -93,9 +93,9 @@ public class Tracer
                 {
                     float x_norm = (x - width * 0.5f) / width * display.getAR();
                     float y_norm = (height * 0.5f - y) / height;
-                    ray.setDir(Vec3f.normalize(new Vec3f(x_norm, y_norm, -1.0f)));
+                    ray.setDir(new Vec3f(x_norm, y_norm, -1.0f).normalize());
 
-                    m_samples[index_screen] = Vec3f.add(m_samples[index_screen], pathTrace(ray, 0));
+                    m_samples[index_screen] = m_samples[index_screen].add(pathTrace(ray, 0));
 
                     display.drawPixelVec3fAveraged(index_screen, m_samples[index_screen], m_samples_taken.get());
                 }
@@ -120,7 +120,7 @@ public class Tracer
         TracerObject OBJECT = null;
         float t_init = Float.MAX_VALUE;
 
-        // Intersect the initial ray against all scene objects and find the closest interestection to the ray origin
+        // Intersect the initial ray against all scene objects and find the closest intersection to the ray origin
         for (TracerObject o : m_scene.getObjects())
         {
             for (Primitive p : o.getPrimitives())
@@ -143,45 +143,45 @@ public class Tracer
             return new Vec3f();
 
         // Get the object's surface material
-        Material M = OBJECT.getMaterial();
+        Material m = OBJECT.getMaterial();
 
         // If the object is a light source, return it's emittance
-        if (Vec3f.length(M.getEmittance()) > 0.0f)
-            return M.getEmittance();
+        if (m.getEmittance().length() > 0.0f)
+            return m.getEmittance();
 
         // If the object is reflective like a mirror, reflect a ray
-        if (M.getReflectivity() > 0.0f)
+        if (m.getReflectivity() > 0.0f)
         {
             Ray newRay;
-            if (M.getGlossiness() > 0.0f)
-                newRay = new Ray(iSectionFinal.getPos(), Vec3f.normalize(Vec3f.add(Vec3f.reflect(ray.getDir(), iSectionFinal.getNorm()), Vec3f.scale(Vec3f.randomHemisphere(iSectionFinal.getNorm()), M.getGlossiness()))));
+            if (m.getGlossiness() > 0.0f)
+                newRay = new Ray(iSectionFinal.getPos(), ray.getDir().add(iSectionFinal.getNorm()).reflect(iSectionFinal.getNorm().randomHemisphere().scale(m.getGlossiness())).normalize());
             else
-                newRay = new Ray(iSectionFinal.getPos(), Vec3f.normalize(Vec3f.reflect(ray.getDir(), iSectionFinal.getNorm())));
-            color_final = Vec3f.add(color_final, Vec3f.scale(pathTrace(newRay, n + 1), M.getReflectivity()));
+                newRay = new Ray(iSectionFinal.getPos(), ray.getDir().reflect(iSectionFinal.getNorm()).normalize());
+            color_final = color_final.add(pathTrace(newRay, n + 1).scale(m.getReflectivity()));
         }
 
         // If the object is refractive like glass, refract the ray
-        if (M.getRefractivity() > 0.0f)
+        if (m.getRefractivity() > 0.0f)
         {
             Ray newRay;
-            if (M.getGlossiness() > 0.0f)
-                newRay = new Ray(iSectionFinal.getPos(), Vec3f.normalize(Vec3f.add(Vec3f.refract(ray.getDir(), iSectionFinal.getNorm(), 1.0f, M.getRefractivityIndex()), Vec3f.scale(Vec3f.randomHemisphere(iSectionFinal.getNorm()), M.getGlossiness()))));
+            if (m.getGlossiness() > 0.0f)
+                newRay = new Ray(iSectionFinal.getPos(), ray.getDir().refract(iSectionFinal.getNorm(), 1.0f, m.getRefractivityIndex()).add(iSectionFinal.getNorm().randomHemisphere().scale(m.getGlossiness())).normalize());
             else
-                newRay = new Ray(iSectionFinal.getPos(), Vec3f.normalize(Vec3f.refract(ray.getDir(), iSectionFinal.getNorm(), 1.0f, M.getRefractivityIndex())));
-            color_final = Vec3f.add(color_final, Vec3f.scale(pathTrace(newRay, n + 1), M.getRefractivity()));
+                newRay = new Ray(iSectionFinal.getPos(), ray.getDir().refract(iSectionFinal.getNorm(), 1.0f, m.getRefractivityIndex()).normalize());
+            color_final = color_final.add(pathTrace(newRay, n + 1).scale(m.getRefractivity()));
         }
 
         // Calculate the diffuse lighting if reflectance is greater than 0.0
         // NOTE: This could be improved / changed, it isn't physically correct at all atm and it's quite simple
-        if (Vec3f.length(M.getReflectance()) > 0.0f)
+        if (m.getReflectance().length() > 0.0f)
         {
-            Ray newRay = new Ray(iSectionFinal.getPos(), Vec3f.normalize(Vec3f.randomHemisphere(iSectionFinal.getNorm())));
+            Ray newRay = new Ray(iSectionFinal.getPos(), iSectionFinal.getNorm().randomHemisphere().normalize());
 
-            float NdotD = Math.abs(Vec3f.dot(iSectionFinal.getNorm(), newRay.getDir()));
-            Vec3f BRDF = Vec3f.scale(M.getReflectance(), 1.0f * NdotD);
+            float NdotD = Math.abs(iSectionFinal.getNorm().dot(newRay.getDir()));
+            Vec3f BRDF = m.getReflectance().scale(1.0f * NdotD);
             Vec3f REFLECTED = pathTrace(newRay, n + 1);
 
-            color_final = Vec3f.add(color_final, Vec3f.add(M.getEmittance(), Vec3f.scale(BRDF, REFLECTED)));
+            color_final = color_final.add(m.getEmittance().add(BRDF.scale(REFLECTED)));
         }
 
         return color_final;

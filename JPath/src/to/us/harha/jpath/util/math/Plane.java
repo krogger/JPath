@@ -4,13 +4,12 @@ import to.us.harha.jpath.Main;
 
 public class Plane extends Primitive
 {
-
-    private Vec3f m_norm;
+    private final Vec3f m_norm;
 
     public Plane(Vec3f pos, Vec3f norm)
     {
         super(pos);
-        m_norm = norm;
+        m_norm = norm.normalize();
     }
 
     @Override
@@ -19,16 +18,16 @@ public class Plane extends Primitive
         Vec3f P;
         float d, t;
 
-        P = Vec3f.sub(m_pos, r.getPos());
-        d = Vec3f.dot(m_norm, r.getDir());
-        t = Vec3f.dot(P, m_norm) / d;
+        P = m_pos.sub(r.getPos());
+        d = m_norm.dot(r.getDir());
+        t = P.dot(m_norm) / d;
 
         if (t < Main.EPSILON)
             return null;
 
         Intersection x = new Intersection();
-        x.setPos(Vec3f.add(Vec3f.scale(r.getDir(), t), r.getPos()));
-        x.setNorm(Vec3f.normalize(m_norm));
+        x.setPos(r.getDir().scale(t).add(r.getPos()));
+        x.setNorm(m_norm);
         x.setT(t);
 
         return x;

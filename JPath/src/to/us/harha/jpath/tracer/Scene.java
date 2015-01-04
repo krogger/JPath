@@ -36,10 +36,10 @@ public class Scene
         Material mat_cyan_glass = new Material(new Vec3f(0.0f), new Vec3f(0.0f, 0.5f, 1.0f), 0.1f, 1.0f, 1.52f, 0.0f);
         Material mat_black_glass = new Material(new Vec3f(0.0f), new Vec3f(), 0.1f, 1.0f, 1.52f, 0.0f);
 
-        Material mat_white_light = new Material(Vec3f.scale(new Vec3f(1.0f, 0.9450f, 0.8784f), 2.0f), new Vec3f());
-        Material mat_lime_light = new Material(Vec3f.scale(new Vec3f(0.5f, 1.0f, 0.0f), 16.0f), new Vec3f());
+        Material mat_white_light = new Material(new Vec3f(1.0f, 0.9450f, 0.8784f).scale(2.0f), new Vec3f());
+        Material mat_lime_light = new Material(new Vec3f(0.5f, 1.0f, 0.0f).scale(16.0f), new Vec3f());
         Material mat_orange_light = new Material(new Vec3f(2.5f, 0.5f, 0.0f), new Vec3f());
-        Material mat_cyan_light = new Material(Vec3f.scale(new Vec3f(0.25f, 0.5f, 1.0f), 16.0f), new Vec3f());
+        Material mat_cyan_light = new Material(new Vec3f(0.25f, 0.5f, 1.0f).scale(16.0f), new Vec3f());
 
         TracerObject obj_white_diffuse = new TracerObject(mat_white_diffuse);
         TracerObject obj_white_diffuse_reflective = new TracerObject(mat_white_diffuse_reflective);

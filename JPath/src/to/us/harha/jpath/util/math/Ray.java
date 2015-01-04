@@ -9,7 +9,7 @@ public class Ray
     public Ray(Vec3f pos, Vec3f dir)
     {
         m_pos = pos;
-        m_dir = Vec3f.normalize(dir);
+        m_dir = dir.normalize();
     }
 
     public Ray()
