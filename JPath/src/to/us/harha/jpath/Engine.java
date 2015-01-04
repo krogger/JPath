@@ -31,7 +31,7 @@ public class Engine
         tracers = new Tracer[sections];
         for (int section = 0; section < sections; section++)
         {
-            tracers[section] = new Tracer(samples, 4, section, sections);
+            tracers[section] = new Tracer(samples, 8, section, sections);
         }
         m_display.createBufferStrategy(2);
     }

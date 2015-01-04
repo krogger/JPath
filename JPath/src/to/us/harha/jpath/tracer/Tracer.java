@@ -43,15 +43,15 @@ public class Tracer
         float height = display.getHeight();
 
         Ray ray = new Ray(new Vec3f(0.0f, 2.5f, 13.0f), new Vec3f(0.0f, 0.0f, -1.0f));
-
+        float pixelSize = 1.0f / height;
         for (int y = m_section; y < height; y += m_sections)
         {
             for (int x = 0;  x < width; x++)
             {
                 int index = x + y * display.getWidth();
 
-                float x_norm = (x - width * 0.5f) / width * display.getAR();
-                float y_norm = (height * 0.5f - y) / height;
+                float x_norm = (x - width * 0.5f) / width * display.getAR() + random.nextFloat() * pixelSize;
+                float y_norm = (height * 0.5f - y) / height + random.nextFloat() * pixelSize;
                 ray.setDir(new Vec3f(x_norm, y_norm, -1.0f).normalize());
 
                 m_samples[index] = m_samples[index].add(pathTrace(ray, 0));

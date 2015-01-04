@@ -18,12 +18,14 @@ public class Display extends Canvas
     private int[] m_pixels;
     private BufferedImage m_image;
     private JFrame m_jframe;
+    private float m_aspectRatio;
 
     public Display(int width, int height, String title)
     {
         m_title = title;
         m_width = width;
         m_height = height;
+        m_aspectRatio = (float) width / (float) height;
     }
 
     public void create()
@@ -101,7 +103,7 @@ public class Display extends Canvas
 
     public float getAR()
     {
-        return (float) m_width / (float) m_height;
+        return m_aspectRatio;
     }
 
 }
