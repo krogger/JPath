@@ -2,13 +2,14 @@ package to.us.harha.jpath.util.math;
 
 import to.us.harha.jpath.Main;
 
-public class Plane extends Primitive
+public class Plane implements Primitive
 {
     private final Vec3f m_norm;
+    private Vec3f m_pos;
 
     public Plane(Vec3f pos, Vec3f norm)
     {
-        super(pos);
+        m_pos = pos;
         m_norm = norm.normalize();
     }
 

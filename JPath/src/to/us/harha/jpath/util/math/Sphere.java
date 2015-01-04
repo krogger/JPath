@@ -2,14 +2,15 @@ package to.us.harha.jpath.util.math;
 
 import to.us.harha.jpath.Main;
 
-public class Sphere extends Primitive
+public class Sphere implements Primitive
 {
 
+    protected Vec3f m_pos;
     private float m_radius;
 
     public Sphere(Vec3f pos, float radius)
     {
-        super(pos);
+        m_pos = pos;
         m_radius = radius;
     }
 

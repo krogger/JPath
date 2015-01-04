@@ -9,9 +9,7 @@ import to.us.harha.jpath.util.math.Primitive;
 import to.us.harha.jpath.util.math.Ray;
 import to.us.harha.jpath.util.math.Vec3f;
 
-import java.util.Arrays;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class Tracer
 {
