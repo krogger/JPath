@@ -11,12 +11,11 @@ import java.util.ArrayList;
 
 public class Scene
 {
-
     private ArrayList<TracerObject> m_objects;
 
     public Scene()
     {
-        m_objects = new ArrayList<TracerObject>();
+        m_objects = new ArrayList<>();
 
         Material mat_white_diffuse = new Material(new Vec3f(0.0f), new Vec3f(1.0f), 0.0f, 0.0f, 0.0f, 0.0f);
         Material mat_white_diffuse_reflective = new Material(new Vec3f(0.0f), new Vec3f(1.0f), 0.1f, 0.0f, 0.0f, 0.0f);
@@ -127,11 +126,6 @@ public class Scene
     public ArrayList<TracerObject> getObjects()
     {
         return m_objects;
-    }
-
-    public void setObjects(ArrayList<TracerObject> m_objects)
-    {
-        this.m_objects = m_objects;
     }
 
 }

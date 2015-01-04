@@ -10,11 +10,6 @@ public class MathUtils
 
     }
 
-    public static float max(Vec3f v)
-    {
-        return Math.max(v.x, Math.max(v.y, v.z));
-    }
-
     public static float clamp(float f, float min, float max)
     {
         return Math.max(min, Math.min(f, max));

@@ -47,24 +47,10 @@ public class Vec3f
         z = 0.0f;
     }
 
-    public void set(Vec3f v)
-    {
-        this.x = v.x;
-        this.y = v.y;
-        this.z = v.z;
-    }
-
-    public void set(float x, float y, float z)
-    {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-    }
-
     @Override
     public String toString()
     {
-        return "Vec2f[" + x + ", " + y + ", " + z + "]";
+        return "Vec3f[" + x + ", " + y + ", " + z + "]";
     }
 
     public static Vec3f lerp(Vec3f v, Vec3f u, float lerpFactor)
@@ -77,19 +63,9 @@ public class Vec3f
         return new Vec3f(left.x + right.x, left.y + right.y, left.z + right.z);
     }
 
-    public static Vec3f add(Vec3f left, float f)
-    {
-        return new Vec3f(left.x + f, left.y + f, left.z + f);
-    }
-
     public static Vec3f sub(Vec3f left, Vec3f right)
     {
         return new Vec3f(left.x - right.x, left.y - right.y, left.z - right.z);
-    }
-
-    public static Vec3f sub(Vec3f left, float f)
-    {
-        return new Vec3f(left.x - f, left.y - f, left.z - f);
     }
 
     public static Vec3f scale(Vec3f left, Vec3f right)
@@ -177,11 +153,6 @@ public class Vec3f
         Vec3f temp_b = scale(N, eta * NdotI + (float) Math.sqrt(k));
 
         return normalize(sub(temp_a, temp_b));
-    }
-
-    public static boolean equals(Vec3f v, Vec3f u)
-    {
-        return v.x == u.x && v.y == u.y && v.z == u.z;
     }
 
     public static Vec3f randomHemisphere(Vec3f N)

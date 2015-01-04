@@ -15,7 +15,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Tracer
 {
 
-    private Display m_display;
     private int m_maxrecursion;
     private int m_cpu_cores;
     private Vec3f[] m_samples;
@@ -25,7 +24,6 @@ public class Tracer
 
     public Tracer(Display display, int maxrecursion, int cpu_cores)
     {
-        m_display = display;
         m_maxrecursion = maxrecursion;
         m_cpu_cores = cpu_cores;
         m_samples = new Vec3f[display.getWidth() * display.getHeight()];
@@ -36,11 +34,6 @@ public class Tracer
         clearSamples();
 
         m_log.printMsg("Tracer instance has been started, using " + m_cpu_cores + " CPU Cores!");
-    }
-
-    public void update(float delta)
-    {
-
     }
 
     // Single threaded rendering
@@ -106,7 +99,6 @@ public class Tracer
 
                     display.drawPixelVec3fAveraged(index_screen, m_samples[index_screen], m_samples_taken.get());
                 }
-
             }
         }
     }
