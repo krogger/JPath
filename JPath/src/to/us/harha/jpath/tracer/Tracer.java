@@ -5,7 +5,6 @@ import to.us.harha.jpath.tracer.object.Material;
 import to.us.harha.jpath.tracer.object.TracerObject;
 import to.us.harha.jpath.util.Logger;
 import to.us.harha.jpath.util.math.Intersection;
-import to.us.harha.jpath.util.math.Primitive;
 import to.us.harha.jpath.util.math.Ray;
 import to.us.harha.jpath.util.math.Vec3f;
 
@@ -71,35 +70,29 @@ public class Tracer
 
         // Initialize some objects and variables
         Vec3f color_final = new Vec3f();
-        Intersection iSection = null;
-        Intersection iSectionFinal = null;
-        TracerObject OBJECT = null;
-        float t_init = Float.MAX_VALUE;
+        Intersection intersection = null;
+        TracerObject nearestObject = null;
 
         // Intersect the initial ray against all scene objects and find the closest intersection to the ray origin
         for (TracerObject o : scene.getObjects())
         {
-            for (Primitive p : o.getPrimitives())
+            Intersection candidate = o.getPrimitive().intersect(ray);
+            if (candidate != null)
             {
-                iSection = p.intersect(ray);
-                if (iSection != null)
+                if (intersection == null || candidate.getT() < intersection.getT())
                 {
-                    if (iSection.getT() < t_init)
-                    {
-                        iSectionFinal = iSection;
-                        t_init = iSection.getT();
-                        OBJECT = o;
-                    }
+                    intersection = candidate;
+                    nearestObject = o;
                 }
             }
         }
 
         // If no intersection happened at all, return black
-        if (iSectionFinal == null)
+        if (intersection == null)
             return new Vec3f();
 
         // Get the object's surface material
-        Material m = OBJECT.getMaterial();
+        Material m = nearestObject.getMaterial();
 
         // If the object is a light source, return it's emittance
         if (m.getEmittance().length() > 0.0f)
@@ -110,9 +103,9 @@ public class Tracer
         {
             Ray newRay;
             if (m.getGlossiness() > 0.0f)
-                newRay = new Ray(iSectionFinal.getPos(), ray.getDir().reflect(iSectionFinal.getNorm()).add(iSectionFinal.getNorm().randomHemisphere(random).scale(m.getGlossiness())).normalize());
+                newRay = new Ray(intersection.getPos(), ray.getDir().reflect(intersection.getNorm()).add(intersection.getNorm().randomHemisphere(random).scale(m.getGlossiness())).normalize());
             else
-                newRay = new Ray(iSectionFinal.getPos(), ray.getDir().reflect(iSectionFinal.getNorm()).normalize());
+                newRay = new Ray(intersection.getPos(), ray.getDir().reflect(intersection.getNorm()).normalize());
             color_final = color_final.add(pathTrace(newRay, n + 1).scale(m.getReflectivity()));
         }
 
@@ -121,9 +114,9 @@ public class Tracer
         {
             Ray newRay;
             if (m.getGlossiness() > 0.0f)
-                newRay = new Ray(iSectionFinal.getPos(), ray.getDir().refract(iSectionFinal.getNorm(), 1.0f, m.getRefractivityIndex()).add(iSectionFinal.getNorm().randomHemisphere(random).scale(m.getGlossiness())).normalize());
+                newRay = new Ray(intersection.getPos(), ray.getDir().refract(intersection.getNorm(), 1.0f, m.getRefractivityIndex()).add(intersection.getNorm().randomHemisphere(random).scale(m.getGlossiness())).normalize());
             else
-                newRay = new Ray(iSectionFinal.getPos(), ray.getDir().refract(iSectionFinal.getNorm(), 1.0f, m.getRefractivityIndex()).normalize());
+                newRay = new Ray(intersection.getPos(), ray.getDir().refract(intersection.getNorm(), 1.0f, m.getRefractivityIndex()).normalize());
             color_final = color_final.add(pathTrace(newRay, n + 1).scale(m.getRefractivity()));
         }
 
@@ -131,9 +124,9 @@ public class Tracer
         // NOTE: This could be improved / changed, it isn't physically correct at all atm and it's quite simple
         if (m.getReflectance().length() > 0.0f)
         {
-            Ray newRay = new Ray(iSectionFinal.getPos(), iSectionFinal.getNorm().randomHemisphere(random).normalize());
+            Ray newRay = new Ray(intersection.getPos(), intersection.getNorm().randomHemisphere(random).normalize());
 
-            float NdotD = Math.abs(iSectionFinal.getNorm().dot(newRay.getDir()));
+            float NdotD = Math.abs(intersection.getNorm().dot(newRay.getDir()));
             Vec3f BRDF = m.getReflectance().scale(1.0f * NdotD);
             Vec3f REFLECTED = pathTrace(newRay, n + 1);
 

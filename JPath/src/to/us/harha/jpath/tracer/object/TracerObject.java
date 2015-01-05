@@ -2,33 +2,26 @@ package to.us.harha.jpath.tracer.object;
 
 import to.us.harha.jpath.util.math.Primitive;
 
-import java.util.ArrayList;
-
 public class TracerObject
 {
 
-    private ArrayList<Primitive> primitives;
+    private Primitive primitive;
     private Material material;
 
-    public TracerObject(Material material)
+    public TracerObject(Primitive primitive, Material material)
     {
-        primitives = new ArrayList<>();
+        this.primitive = primitive;
         this.material = material;
     }
 
-    public ArrayList<Primitive> getPrimitives()
+    public Primitive getPrimitive()
     {
-        return primitives;
+        return primitive;
     }
 
     public Material getMaterial()
     {
         return material;
-    }
-
-    public void addPrimitive(Primitive p)
-    {
-        primitives.add(p);
     }
 
 }
