@@ -33,7 +33,6 @@ public class Tracer
         log.printMsg("Tracer " + section + " of " + sections + " started");
     }
 
-    // Multithreaded rendering
     public void renderPortion(Display display, int sampleCount)
     {
         float width = display.getWidth();
@@ -101,22 +100,21 @@ public class Tracer
         // If the object is reflective like a mirror, reflect a ray
         if (m.getReflectivity() > 0.0f)
         {
-            Ray newRay;
+            Vec3f newDir = ray.getDir().reflect(intersection.getNorm());
             if (m.getGlossiness() > 0.0f)
-                newRay = new Ray(intersection.getPos(), ray.getDir().reflect(intersection.getNorm()).add(intersection.getNorm().randomHemisphere(random).scale(m.getGlossiness())).normalize());
-            else
-                newRay = new Ray(intersection.getPos(), ray.getDir().reflect(intersection.getNorm()).normalize());
+                newDir = newDir.add(intersection.getNorm().randomHemisphere(random).scale(m.getGlossiness()));
+            Ray newRay = new Ray(intersection.getPos(), newDir);
             color_final = color_final.add(pathTrace(newRay, n + 1).scale(m.getReflectivity()));
         }
 
         // If the object is refractive like glass, refract the ray
         if (m.getRefractivity() > 0.0f)
         {
-            Ray newRay;
-            if (m.getGlossiness() > 0.0f)
-                newRay = new Ray(intersection.getPos(), ray.getDir().refract(intersection.getNorm(), 1.0f, m.getRefractivityIndex()).add(intersection.getNorm().randomHemisphere(random).scale(m.getGlossiness())).normalize());
-            else
-                newRay = new Ray(intersection.getPos(), ray.getDir().refract(intersection.getNorm(), 1.0f, m.getRefractivityIndex()).normalize());
+            Vec3f newDir = ray.getDir().refract(intersection.getNorm(), 1.0f, m.getRefractivityIndex());
+            if (m.getGlossiness() > 0.0f) {
+                newDir = newDir.add(intersection.getNorm().randomHemisphere(random).scale(m.getGlossiness()));
+            }
+            Ray newRay = new Ray(intersection.getPos(), newDir);
             color_final = color_final.add(pathTrace(newRay, n + 1).scale(m.getRefractivity()));
         }
 

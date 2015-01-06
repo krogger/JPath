@@ -22,6 +22,7 @@ public class Engine
         this.display = display;
 
         sections = Runtime.getRuntime().availableProcessors();
+        //sections = 8;
         log = new Logger(this.getClass().getName());
         log.printMsg("Engine instance has been started! # of Available CPU Cores: " + sections);
 

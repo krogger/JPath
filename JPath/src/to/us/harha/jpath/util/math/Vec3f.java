@@ -1,15 +1,21 @@
 package to.us.harha.jpath.util.math;
 
-import to.us.harha.jpath.Main;
-
 import java.util.Random;
 
 public class Vec3f
 {
-
     public final float x;
     public final float y;
     public final float z;
+
+    public static final Vec3f UP = new Vec3f(0, 1, 0);
+    public static final Vec3f DOWN = new Vec3f(0, -1, 0);
+    public static final Vec3f LEFT = new Vec3f(-1, 0, 0);
+    public static final Vec3f RIGHT = new Vec3f(1, 0, 0);
+    public static final Vec3f FRONT = new Vec3f(0, 0, 1);
+    public static final Vec3f BACK = new Vec3f(0, 0, -1);
+
+    public static final Vec3f BLACK = new Vec3f(0, 0, 0);
 
     public Vec3f(float x, float y, float z)
     {
@@ -112,7 +118,7 @@ public class Vec3f
 
     public Vec3f reflect(Vec3f normal)
     {
-        return this.sub(normal.scale(normal.dot(this)).scale(2.0f));
+        return this.sub(normal.scale(normal.dot(this) * 2.0f));
     }
 
     public Vec3f refract(Vec3f normal, float i1, float i2)
