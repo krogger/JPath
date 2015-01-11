@@ -121,32 +121,23 @@ public class Vec3f
         return this.sub(normal.scale(normal.dot(this) * 2.0f));
     }
 
-    public Vec3f refract(Vec3f normal, float i1, float i2)
+    public Vec3f refract(Vec3f normal, float i1)
     {
-        float NdotI, n1, n2;
-
-        NdotI = normal.dot(this);
-
-        if (NdotI > 0.0)
-        {
-            n1 = i2;
-            n2 = i1;
-        } else
-        {
-            n1 = i1;
-            n2 = i2;
-        }
-
-        float eta = n1 / n2;
-        float k = 1.0f - eta * eta * (1.0f - NdotI * NdotI);
+        float NdotI = normal.dot(this);
+        float NdotI2 = NdotI * NdotI;
+        float eta = (NdotI > 0) ? 1.0f/i1 : i1;
+        float k = 1.0f - eta * (1.0f - NdotI2);
 
         if (k < 0.0f)
-            return new Vec3f(0.0f);
-
-        Vec3f temp_a = this.scale(eta);
-        Vec3f temp_b = normal.scale(eta * NdotI + (float) Math.sqrt(k));
-
-        return temp_a.sub(temp_b).normalize();
+            return reflect(normal).normalize();
+        if (k >= 0)
+        {
+            return this.scale(eta).add(normal.scale(eta * NdotI - (float) Math.sqrt(k))).normalize();
+        }
+        else
+        {
+            return this.scale(eta).add(normal.scale(eta * NdotI + (float) Math.sqrt(k))).normalize();
+        }
     }
 
     public Vec3f randomHemisphere(Random random)

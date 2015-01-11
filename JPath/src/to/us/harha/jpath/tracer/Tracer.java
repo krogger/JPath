@@ -20,13 +20,13 @@ public class Tracer
     private Logger log;
     private Random random;
 
-    public Tracer(Vec3f[] samples, int maxDepth, int section, int sections)
+    public Tracer(Scene scene, Vec3f[] samples, int maxDepth, int section, int sections)
     {
+        this.scene = scene;
         this.samples = samples;
         this.maxDepth = maxDepth;
         this.section = section;
         this.sections = sections;
-        scene = new Scene();
         random = new Random();
         log = new Logger(this.getClass().getName());
 
@@ -75,7 +75,7 @@ public class Tracer
         // Intersect the initial ray against all scene objects and find the closest intersection to the ray origin
         for (TracerObject o : scene.getObjects())
         {
-            Intersection candidate = o.getPrimitive().intersect(ray);
+            Intersection candidate = o.getShape().intersect(ray);
             if (candidate != null)
             {
                 if (intersection == null || candidate.getT() < intersection.getT())
@@ -110,7 +110,7 @@ public class Tracer
         // If the object is refractive like glass, refract the ray
         if (m.getRefractivity() > 0.0f)
         {
-            Vec3f newDir = ray.getDir().refract(intersection.getNorm(), 1.0f, m.getRefractivityIndex());
+            Vec3f newDir = ray.getDir().refract(intersection.getNorm(), m.getRefractivityIndex());
             if (m.getGlossiness() > 0.0f) {
                 newDir = newDir.add(intersection.getNorm().randomHemisphere(random).scale(m.getGlossiness()));
             }

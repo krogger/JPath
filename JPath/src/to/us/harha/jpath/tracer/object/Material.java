@@ -12,6 +12,9 @@ public class Material
     private float refractivityIndex;
     private float glossiness;
 
+    public static final Material IDEAL_GLASS = new Material(Vec3f.BLACK, Vec3f.BLACK, 0, 1, 1.52f, 0);
+    public static final Material WHITE_LIGHT = new Material(new Vec3f(1, 1, 1), Vec3f.BLACK, 0, 0, 0, 0);
+
     public Material(Vec3f emittance, Vec3f reflectance, float reflectivity, float refractivity, float refractivityIndex, float glossiness)
     {
         this.emittance = emittance;

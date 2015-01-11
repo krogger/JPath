@@ -10,8 +10,6 @@ public class Main
 
     public static final float EPSILON = 1e-3f;
 
-    public static final Random RNG = new Random();
-
     public static void main(String[] args)
     {
         Display display = new Display(WIDTH, HEIGHT, TITLE);

@@ -1,5 +1,7 @@
 package to.us.harha.jpath;
 
+import to.us.harha.jpath.tracer.LensFocusScene;
+import to.us.harha.jpath.tracer.SimpleScene;
 import to.us.harha.jpath.tracer.Tracer;
 import to.us.harha.jpath.util.Logger;
 import to.us.harha.jpath.util.TimeUtils;
@@ -22,7 +24,7 @@ public class Engine
         this.display = display;
 
         sections = Runtime.getRuntime().availableProcessors();
-        //sections = 8;
+        //sections = 1;
         log = new Logger(this.getClass().getName());
         log.printMsg("Engine instance has been started! # of Available CPU Cores: " + sections);
 
@@ -32,7 +34,7 @@ public class Engine
         tracers = new Tracer[sections];
         for (int section = 0; section < sections; section++)
         {
-            tracers[section] = new Tracer(samples, 8, section, sections);
+            tracers[section] = new Tracer(new SimpleScene(), samples, 20, section, sections);
         }
         this.display.createBufferStrategy(2);
     }

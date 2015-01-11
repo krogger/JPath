@@ -2,7 +2,7 @@ package to.us.harha.jpath.util.math;
 
 import to.us.harha.jpath.Main;
 
-public class Sphere implements Solid
+public class Sphere implements Shape
 {
     private final Vec3f pos;
     private final float radius;
@@ -25,11 +25,23 @@ public class Sphere implements Solid
 
         if (h < 0.0f)
             return null;
+        // 2 candidates.  Choose closest > epsilon
+        // TODO: Should break out a 'self' boolean instead, then we don't need an epsilon
+        float t1 = -b - (float) Math.sqrt(h);
+        float t2 = -b + (float) Math.sqrt(h);
 
-        float t = -b - (float) Math.sqrt(h);
-
-        if (t < Main.EPSILON)
-            return null;
+        float t;
+        if (t1 < Main.EPSILON)
+        {
+            if (t2 < Main.EPSILON) {
+                return null;
+            }
+            t = t2;
+        }
+        else
+        {
+            t = t1;
+        }
 
         Vec3f point = r.getPos().add(r.getDir().scale(t));
         return new Intersection(point, point.sub(pos).divide(radius), t);
